@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f7f7fa;
+  --card-bg: #fff;
+  --text: #1a1a1a;
+  --border: #e5e7eb;
+  --input-bg: #fff;
+  --primary: #2563eb;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: #1a1a1a;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
+/* Preserve navbar text color */
+nav a, nav button {
+  color: inherit !important;
+}
+
+/* Delete button hover effect */
+.delete-button:hover {
+  background-color: #fee2e2 !important;
+  border-color: #ef4444 !important;
+}
+
+/* Read more button hover effect */
+.read-more-button:hover {
+  color: #1a472a !important;
+  text-decoration-thickness: 2px !important;
+}
+
+body.dark {
+  --bg: #18181b;
+  --card-bg: #23232b;
+  --text: #1a1a1a;
+  --text-secondary: #1a1a1a;
+  --primary: #60a5fa;
+  --primary-contrast: #18181b;
+  --border: #333;
+  --button-bg: #60a5fa;
+  --button-text: #18181b;
+  --button-outline-bg: #23232b;
+  --button-outline-text: #60a5fa;
+  --button-outline-border: #60a5fa;
+  --button-gray-bg: #23232b;
+  --button-gray-text: #1a1a1a;
+  --button-gray-border: #333;
+}
+
+body.dark input, body.dark button, body.dark textarea {
+  background: #27272a;
+  color: #1a1a1a;
+  border-color: #444;
+}
+
+body.dark a { color: #1a1a1a; }
+body.dark ul li { background: #23232b !important; border-color: #333 !important; }
+
+@media (max-width: 900px) {
+  body, .bookmarks-container {
+    max-width: 98vw !important;
+    padding: 0 8px;
+  }
+  nav {
+    flex-wrap: wrap;
+    gap: 8px !important;
+    font-size: 1rem;
+  }
+  ul li {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 10px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px !important;
+    font-size: 0.95rem;
+  }
+  .bookmarks-container, body {
+    max-width: 100vw !important;
+    padding: 0 2px;
+  }
+  ul li {
+    font-size: 0.98rem;
+    padding: 8px !important;
+  }
+}
