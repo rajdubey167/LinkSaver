@@ -15,7 +15,8 @@ export default function LoginPage() {
     setLoading(true);
     setMessage("");
     try {
-      const res = await axios.post("/api/auth/login", { email, password });
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
+      const res = await axios.post(`${API_BASE}/api/auth/login`, { email, password });
       localStorage.setItem("token", res.data.token);
       router.push("/bookmarks");
     } catch (err: any) {
@@ -126,6 +127,7 @@ export default function LoginPage() {
             <input
               id="email"
               type="email"
+              autoComplete="username"
               placeholder="Email address"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -138,6 +140,7 @@ export default function LoginPage() {
             <input
               id="password"
               type="password"
+              autoComplete="current-password"
               placeholder="Password"
               value={password}
               onChange={e => setPassword(e.target.value)}

@@ -38,7 +38,8 @@ export default function RegisterPage() {
 
     try {
       const { confirmPassword, ...registerData } = formData;
-      await axios.post("http://localhost:5000/api/auth/register", registerData);
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
+      await axios.post(`${API_BASE}/api/auth/register`, registerData);
       setMessage("Registration successful! Redirecting to login...");
       setTimeout(() => {
         router.push("/auth/login");
@@ -154,6 +155,7 @@ export default function RegisterPage() {
                 id="firstName"
                 name="firstName"
                 type="text"
+                autoComplete="given-name"
                 placeholder="First Name"
                 value={formData.firstName}
                 onChange={handleChange}
@@ -167,6 +169,7 @@ export default function RegisterPage() {
                 id="lastName"
                 name="lastName"
                 type="text"
+                autoComplete="family-name"
                 placeholder="Last Name"
                 value={formData.lastName}
                 onChange={handleChange}
@@ -181,6 +184,7 @@ export default function RegisterPage() {
               id="username"
               name="username"
               type="text"
+              autoComplete="username"
               placeholder="Username"
               value={formData.username}
               onChange={handleChange}
@@ -194,6 +198,7 @@ export default function RegisterPage() {
               id="email"
               name="email"
               type="email"
+              autoComplete="email"
               placeholder="Email address"
               value={formData.email}
               onChange={handleChange}
@@ -207,6 +212,7 @@ export default function RegisterPage() {
               id="password"
               name="password"
               type="password"
+              autoComplete="new-password"
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
@@ -220,6 +226,7 @@ export default function RegisterPage() {
               id="confirmPassword"
               name="confirmPassword"
               type="password"
+              autoComplete="new-password"
               placeholder="Confirm Password"
               value={formData.confirmPassword}
               onChange={handleChange}
