@@ -42,7 +42,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-10 flex items-center gap-4 px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-500 text-base font-medium shadow-lg">
       <Link 
         href="/" 
-        className="flex items-center gap-2 text-white text-4xl font-bold font-geist-sans hover:scale-105 transition-transform"
+        className="flex items-center gap-2 text-white text-4xl font-bold hover:scale-105 transition-transform"
       >
         <span role="img" aria-label="link emoji" className="text-3xl">🔗</span>
         <span className="bg-gradient-to-r from-white to-emerald-200 text-transparent bg-clip-text">

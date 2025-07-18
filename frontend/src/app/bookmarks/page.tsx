@@ -28,9 +28,8 @@ interface Bookmark {
   createdAt: string; // Added for sorting
 }
 
-const SortableBookmark = ({ bookmark }: { bookmark: Bookmark }) => {
+const SortableBookmark = ({ bookmark, onDelete }: { bookmark: Bookmark, onDelete: (id: string) => void }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  
   const {
     attributes,
     listeners,
@@ -38,7 +37,6 @@ const SortableBookmark = ({ bookmark }: { bookmark: Bookmark }) => {
     transform,
     transition,
   } = useSortable({ id: bookmark._id });
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -50,22 +48,19 @@ const SortableBookmark = ({ bookmark }: { bookmark: Bookmark }) => {
     padding: 12,
     background: "#fff",
   };
-
   return (
-    <li
-      ref={setNodeRef}
-      style={style}
-    >
-      <div 
-        {...attributes} 
-        {...listeners}
-        style={{
-          display: 'flex',
-          width: '100%',
-          alignItems: 'center',
-          marginBottom: 8
-        }}
-      >
+    <li ref={setNodeRef} style={style}>
+      <div style={{ display: 'flex', width: '100%', alignItems: 'center', marginBottom: 8 }}>
+        <span {...attributes} {...listeners} style={{ cursor: 'grab', marginRight: 8, userSelect: 'none' }} title="Drag to reorder">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7" cy="6" r="1.5" fill="#888"/>
+            <circle cx="7" cy="10" r="1.5" fill="#888"/>
+            <circle cx="7" cy="14" r="1.5" fill="#888"/>
+            <circle cx="13" cy="6" r="1.5" fill="#888"/>
+            <circle cx="13" cy="10" r="1.5" fill="#888"/>
+            <circle cx="13" cy="14" r="1.5" fill="#888"/>
+          </svg>
+        </span>
         {bookmark.favicon ? (
           <img 
             src={bookmark.favicon} 
@@ -96,8 +91,25 @@ const SortableBookmark = ({ bookmark }: { bookmark: Bookmark }) => {
             {bookmark.title}
           </a>
         </div>
+        <button
+          onClick={() => onDelete(bookmark._id)}
+          className="delete-button"
+          style={{
+            marginLeft: 8,
+            background: '#fee2e2',
+            border: '1px solid #ef4444',
+            color: '#ef4444',
+            borderRadius: 4,
+            padding: '4px 8px',
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'background 0.2s, color 0.2s',
+          }}
+        >
+          Delete
+        </button>
       </div>
-
       <div style={{ paddingLeft: 36 }}>
         <div style={{ fontSize: 12, color: '#111111', lineHeight: '1.5', marginBottom: 4 }}>
           {isExpanded ? bookmark.summary : `${bookmark.summary.slice(0, 150)}...`}
@@ -143,6 +155,7 @@ export default function BookmarksPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'titleAsc' | 'titleDesc'>('newest');
   const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const [deleteStatus, setDeleteStatus] = useState<string | null>(null);
 
   // 2. All sensor hooks
   const sensors = useSensors(
@@ -207,7 +220,7 @@ export default function BookmarksPage() {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/bookmarks", {
+      const res = await axios.get("/api/bookmarks", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBookmarks(res.data);
@@ -225,7 +238,7 @@ export default function BookmarksPage() {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "http://localhost:5000/api/bookmarks",
+        "/api/bookmarks",
         { url: newUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -251,7 +264,7 @@ export default function BookmarksPage() {
         // Update order in backend
         const token = localStorage.getItem("token");
         axios.post(
-          "http://localhost:5000/api/bookmarks/reorder",
+          "/api/bookmarks/reorder",
           { orders: newItems.map((b, i) => ({ id: b._id, order: i })) },
           { headers: { Authorization: `Bearer ${token}` } }
         ).catch(() => {
@@ -260,6 +273,26 @@ export default function BookmarksPage() {
 
         return newItems;
       });
+    }
+  };
+
+  // Delete bookmark handler
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this bookmark?")) {
+      return;
+    }
+    setDeleteStatus(null);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/api/bookmarks/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setBookmarks((prev) => prev.filter((b) => b._id !== id));
+      setDeleteStatus("Bookmark deleted successfully.");
+      console.log("Bookmark deleted successfully.");
+    } catch (err: any) {
+      setDeleteStatus("Failed to delete bookmark.");
+      console.error("Failed to delete bookmark:", err);
     }
   };
 
@@ -411,6 +444,20 @@ export default function BookmarksPage() {
           </div>
 
           {/* Bookmarks List */}
+          {deleteStatus && (
+            <div style={{
+              color: deleteStatus.includes('success') ? '#16a34a' : '#dc2626',
+              marginBottom: 16,
+              padding: '10px 16px',
+              background: deleteStatus.includes('success') ? '#f0fdf4' : '#fef2f2',
+              borderRadius: '8px',
+              border: `1px solid ${deleteStatus.includes('success') ? '#bbf7d0' : '#fee2e2'}`,
+              fontSize: '15px',
+              fontWeight: 500
+            }}>
+              {deleteStatus}
+            </div>
+          )}
           {filteredAndSortedBookmarks.length === 0 ? (
             <div style={{
               textAlign: "center",
@@ -439,6 +486,7 @@ export default function BookmarksPage() {
                     <SortableBookmark
                       key={bookmark._id}
                       bookmark={bookmark}
+                      onDelete={handleDelete}
                     />
                   ))}
                 </ul>

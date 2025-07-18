@@ -18,17 +18,86 @@ export default function Home() {
   return (
     <div>
       <div style={{
-        minHeight: "80vh",
+        minHeight: "100vh",
         width: "100vw",
-        background: "linear-gradient(135deg, #f0f4f1 0%, #edf7f0 100%)",
+        background: "linear-gradient(135deg, #18181b 0%, #23232b 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         fontFamily: 'Inter, Arial, sans-serif',
-        color: "#222",
+        color: "#ededed",
         position: "relative",
         overflow: "hidden",
       }}>
+        {/* Animated SVG Background - Fullscreen, Dense */}
+        <svg
+          width="100vw"
+          height="100vh"
+          viewBox="0 0 1920 1080"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            zIndex: 0,
+            pointerEvents: "none",
+            opacity: 0.55,
+            filter: "blur(0.5px)",
+            animation: "floatBG 18s ease-in-out infinite alternate"
+          }}
+        >
+          {/* Many Nodes */}
+          {[...Array(24)].map((_, i) => {
+            // Randomized positions, radii, and colors for variety
+            const cx = 120 + (i % 6) * 300 + (i % 2 === 0 ? 40 : -40);
+            const cy = 120 + Math.floor(i / 6) * 250 + (i % 3) * 30;
+            const r = 14 + (i % 5) * 6;
+            const color = ["#60a5fa","#2563eb","#fbbf24","#a3e635"][i % 4];
+            const opacity = 0.13 + (i % 4) * 0.05;
+            const dur = 6 + (i % 7) * 1.2;
+            return (
+              <circle key={i} cx={cx} cy={cy} r={r} fill={color} fillOpacity={opacity}>
+                <animate attributeName="cy" values={`${cy};${cy+20};${cy}`} dur={`${dur}s`} repeatCount="indefinite" />
+              </circle>
+            );
+          })}
+          {/* Many Interconnecting Lines */}
+          {[...Array(18)].map((_, i) => {
+            const x1 = 120 + (i % 6) * 300;
+            const y1 = 120 + Math.floor(i / 6) * 250;
+            const x2 = 120 + ((i+2) % 6) * 300;
+            const y2 = 120 + Math.floor((i+2) / 6) * 250;
+            const color = ["#60a5fa","#2563eb","#fbbf24","#a3e635"][i % 4];
+            const dash = 5 + (i % 4) * 3;
+            const opacity = 0.11 + (i % 4) * 0.04;
+            return (
+              <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth="2" strokeDasharray={`${dash} ${dash+3}`} opacity={opacity} />
+            );
+          })}
+          {/* Many Subtle Icons */}
+          {[...Array(12)].map((_, i) => {
+            const x = 100 + (i % 6) * 300;
+            const y = 100 + Math.floor(i / 6) * 250;
+            const w = 18 + (i % 3) * 10;
+            const h = 9 + (i % 2) * 6;
+            const color = ["#60a5fa","#fbbf24","#a3e635","#2563eb"][i % 4];
+            const opacity = 0.10 + (i % 4) * 0.04;
+            return (
+              <rect key={i} x={x} y={y} width={w} height={h} rx="2" fill={color} fillOpacity={opacity} />
+            );
+          })}
+          {/* Many Tag/Ellipse shapes */}
+          {[...Array(10)].map((_, i) => {
+            const cx = 200 + (i % 5) * 350;
+            const cy = 200 + Math.floor(i / 5) * 400;
+            const rx = 8 + (i % 3) * 4;
+            const ry = 4 + (i % 2) * 2;
+            const color = ["#60a5fa","#2563eb","#fbbf24","#a3e635"][i % 4];
+            const opacity = 0.09 + (i % 4) * 0.04;
+            return (
+              <ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry} fill={color} fillOpacity={opacity} />
+            );
+          })}
+        </svg>
         {/* Background Pattern */}
         <div style={{
           position: "absolute",
@@ -219,6 +288,12 @@ export default function Home() {
           </div>
         </div>
       )}
+      <style jsx global>{`
+        @keyframes floatBG {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-20px); }
+        }
+      `}</style>
     </div>
   );
 }
